@@ -15,6 +15,7 @@ from sklearn.neighbors import KNeighborsRegressor
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.cluster import KMeans
+from sklearn.metrics import confusion_matrix, accuracy_score
 
 
 nba = pd.read_csv('nba_playoffs_meta.csv')
@@ -71,6 +72,14 @@ kmeans = KMeans(n_clusters=4, random_state=65)
 nba['clusters'] = kmeans.fit_predict(nba)
 nba.head(3)
 nba.clusters.value_counts()
+
+ypred = round(model1.predict(sm.add_constant(x)))
+cm = confusion_matrix(y, ypred)
+plt.figure(figsize=(4, 4))
+plt.title("HeatMap")
+plt.xlabel("Predicted Values")
+plt.ylabel("Actual Values")
+sns.heatmap(cm, cmap="Blues", annot=True, fmt=".1f")
 
 
 
