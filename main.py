@@ -12,6 +12,10 @@ from sklearn.model_selection import KFold
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.neighbors import KNeighborsRegressor
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+
 
 nba = pd.read_csv('nba_playoffs_meta.csv')
 
@@ -47,6 +51,26 @@ cv_rmse_scores = -cross_val_score(rf_model, X_train, y_train, cv=kf, scoring='ne
 
 knn_model = KNeighborsRegressor()
 knn_model.fit(X_train, y_train)
+
+# Calculate WCSS for each number of clusters from 2 to 10
+wcss = []
+for i in range(2, 11):
+    kmeans = KMeans(n_clusters=i, random_state=42)  
+    kmeans.fit(nba)  # Fit the model to your dataset
+    wcss.append(kmeans.inertia_)  # Append the inertia (WCSS) to the list
+
+# Plot the elbow diagram
+plt.plot(range(2, 11), wcss, '-o', color='red', markersize = 10)
+plt.title("Elbow plot for optimal K")
+plt.xlabel("num of clusters")
+plt.ylabel("distortion")
+plt.xticks()  # Correct the range to match the loop
+plt.show()
+
+kmeans = KMeans(n_clusters=4, random_state=65)
+nba['clusters'] = kmeans.fit_predict(nba)
+nba.head(3)
+nba.clusters.value_counts()
 
 
 
